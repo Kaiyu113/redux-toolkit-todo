@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
   addTodo,
   deleteTodo,
@@ -22,6 +23,13 @@ const Todo = () => {
   const sortByOnChange = (e) => {
     dispatch(sort(e.target.value));
   };
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:3000/getTodo")
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  }, []);
 
   return (
     <div>
