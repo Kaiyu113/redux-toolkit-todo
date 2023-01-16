@@ -3,12 +3,15 @@ const todoSchema = mongoose.Schema(
   {
     id: {
       type: String,
+      unique: true,
     },
     value: {
       type: String,
+      required: true,
     },
     iscompleted: {
       type: Boolean,
+      default: false,
     },
   },
   {

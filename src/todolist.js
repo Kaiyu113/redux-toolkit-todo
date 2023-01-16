@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 const Todo = () => {
   const [input, setInput] = useState("");
-
+  const [todoS, setTodoS] = useState([]);
   const dispatch = useDispatch();
 
   const { todo, edit } = useSelector((state) => state.todo);
@@ -32,12 +32,24 @@ const Todo = () => {
       })
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
+    getTodo();
   };
-  useEffect(() => {
+  const deleteTodo = (id) => {
+    axios
+      .delete(`http://localhost:8080/deletetodo/${id}`)
+      .then((res) => console.log(res));
+    getTodo();
+  };
+  const getTodo = () => {
     axios
       .get("http://localhost:8080/gettodo")
-      .then((res) => console.log(res.data));
+      .then((res) => setTodoS(res.data));
+  };
+
+  useEffect(() => {
+    getTodo();
   }, []);
+
   return (
     <div>
       <p className="title">To Do App</p>
@@ -47,7 +59,6 @@ const Todo = () => {
         value={input}
         onChange={onChange}
       />
-
       {edit ? (
         <button
           className="submitButton edit"
@@ -69,7 +80,6 @@ const Todo = () => {
           Add
         </button>
       )}
-
       <select className="submitButton" onChange={sortByOnChange} name="cars">
         <option value="unselect">Select a Sorting Option</option>
 
@@ -78,8 +88,7 @@ const Todo = () => {
           <option>Date (old to new)</option>
         </optgroup>
       </select>
-
-      {todo.map((todo, index) => (
+      {todoS.map((todo, index) => (
         <div
           key={todo.id}
           className={todo.iscompleted ? "todoItem completed" : "todoItem"}
@@ -94,7 +103,7 @@ const Todo = () => {
             </button>
             <button
               className="submitButton"
-              onClick={() => dispatch(deleteTodo(todo.id))}
+              onClick={() => deleteTodo(todo.id)}
             >
               X
             </button>
