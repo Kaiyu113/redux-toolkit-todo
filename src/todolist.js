@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addTodo,
@@ -8,6 +8,7 @@ import {
   iscompleted,
   sort,
 } from "./redux/todoSlice";
+import axios from "axios";
 const Todo = () => {
   const [input, setInput] = useState("");
 
@@ -23,6 +24,20 @@ const Todo = () => {
     dispatch(sort(e.target.value));
   };
 
+  const serverAdd = (input) => {
+    console.log(input);
+    axios
+      .post("http://localhost:8080/addtodo", {
+        input: input,
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8080/gettodo")
+      .then((res) => console.log(res.data));
+  }, []);
   return (
     <div>
       <p className="title">To Do App</p>
@@ -47,7 +62,7 @@ const Todo = () => {
         <button
           className="submitButton"
           onClick={() => {
-            dispatch(addTodo(input));
+            serverAdd(input);
             setInput("");
           }}
         >
