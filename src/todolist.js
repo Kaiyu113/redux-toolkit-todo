@@ -12,6 +12,7 @@ import axios from "axios";
 const Todo = () => {
   const [input, setInput] = useState("");
   const [todoS, setTodoS] = useState([]);
+  //const [mount, setMount] = useState(false);
   const dispatch = useDispatch();
 
   const { todo, edit } = useSelector((state) => state.todo);
@@ -23,10 +24,10 @@ const Todo = () => {
   const sortByOnChange = (e) => {
     dispatch(sort(e.target.value));
   };
-
-  const serverAdd = (input) => {
+  //some people update frontend and backend saperately
+  const serverAdd = async (input) => {
     console.log(input);
-    axios
+    await axios
       .post("http://localhost:8080/addtodo", {
         input: input,
       })
@@ -34,8 +35,15 @@ const Todo = () => {
       .catch((err) => console.log(err));
     getTodo();
   };
-  const deleteTodo = (id) => {
-    axios
+  const serverComplete = async (id) => {
+    await axios
+      .put(`http://localhost:8080/iscomplete/${id}`)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+    getTodo();
+  };
+  const deleteTodo = async (id) => {
+    await axios
       .delete(`http://localhost:8080/deletetodo/${id}`)
       .then((res) => console.log(res));
     getTodo();
@@ -90,10 +98,10 @@ const Todo = () => {
       </select>
       {todoS.map((todo, index) => (
         <div
-          key={todo.id}
+          key={todo._id}
           className={todo.iscompleted ? "todoItem completed" : "todoItem"}
         >
-          <div onClick={() => dispatch(iscompleted(todo.id))}>{todo.value}</div>
+          <div onClick={() => serverComplete(todo.id)}>{todo.value}</div>
           <div>
             <button
               className="submitButton"

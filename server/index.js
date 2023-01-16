@@ -21,7 +21,6 @@ const PORT = 8080;
 mongoose.set("strictQuery", false);
 mongoose.connect(process.env.MONGODB_URI);
 console.log("mongodb connected");
-
 // create a route for the app
 app.get("/gettodo", (req, res) => {
   Todo.find(function (err, data) {
@@ -29,7 +28,6 @@ app.get("/gettodo", (req, res) => {
     res.send(data);
   });
 });
-
 // addtodo post request
 app.post("/addtodo", (req, res) => {
   const { input } = req.body;
@@ -44,6 +42,15 @@ app.post("/addtodo", (req, res) => {
       res.send("Model saved successfully!");
     }
   });
+});
+//need to use async await because the find sth in database is async progress
+app.put("/iscomplete/:id", async (req, res) => {
+  console.log(req.params.id);
+  const todo = await Todo.findOne({ id: req.params.id });
+  console.log(todo);
+  todo.iscompleted = !todo.iscompleted;
+  todo.save();
+  res.send("iscompleted change");
 });
 
 app.delete("/deletetodo/:id", (req, res) => {
